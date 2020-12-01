@@ -67,6 +67,7 @@ def Menu():
     print()
 
     root = BuildTree(test_input, max_depth)
+    GenerateSyntax(root)
 
 
 def BuildTree(test_input, max_depth):
@@ -92,7 +93,7 @@ def BuildTree(test_input, max_depth):
             else:
                 j = val
                 vartemp = productions_dict[j][1]
-                uwv = tempNode.data.replace(varsust, vartemp)
+                uwv = tempNode.data.replace(varsust, vartemp, 1)
                 temp = Node(uwv)
                 tempNode.AddChild(temp)
 
@@ -107,6 +108,7 @@ def BuildTree(test_input, max_depth):
     else:
         print("Input: " + test_input + " was not accepted")
     print()
+    return root
 
 
 def GetLeft(tempNode):
@@ -116,7 +118,7 @@ def GetLeft(tempNode):
     for i in range(0, len(tempNode.data)):
         for nonterminal in nonterminals:
             if tempNode.data[i] == nonterminal:
-                return tempNode.data[i]
+                return nonterminal
     return None
 
 def FindProductions(varsust, i):
@@ -153,5 +155,51 @@ def EnterQueue(uwv, test_input):
             if uwvtrimmed[w] != test_input[w]:
                 return False
         return True
+
+def GenerateSyntax(root):
+    """
+    docstring
+    """
+    result = ""
+    stack = deque()
+    stack.append(root)
+
+    while stack:
+        nodeTemp = stack.pop()
+        result += "[" + nodeTemp.data
+
+        if len(nodeTemp.son) == 0:
+            nodeTemp.EditRemaining(0)
+            if nodeTemp.parent == None:
+                result += "]"
+            else:
+                if nodeTemp.remaining == 0:
+                    result += "]"
+                papa = nodeTemp.parent
+                papa.EditRemaining(papa.remaining-1)
+                while nodeTemp.parent != None and nodeTemp.parent.remaining == 0:
+                    nodeTemp = nodeTemp.parent
+                    if nodeTemp.remaining == 0 and nodeTemp.deuda == False:
+                        result += "]"
+                        nodeTemp.EditDeuda(True)
+        else:
+            if len(nodeTemp.son) != 0:
+                if nodeTemp.parent != None:
+                    papa = nodeTemp.parent
+                    papa.EditRemaining(papa.remaining-1)
+                    hijos = nodeTemp.son
+                    nodeTemp.EditRemaining(len(hijos))
+                    for hijo in hijos:
+                        stack.append(hijo)
+                else:
+                    hijos = nodeTemp.son
+                    nodeTemp.EditRemaining(len(hijos))
+                    for hijo in hijos:
+                        stack.append(hijo)
+    print("To view the tree, enter the following string in http://ironcreek.net/syntaxtree/")
+    print()
+    print(result)
+    print()
+            
 
 SelectFile()

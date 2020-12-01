@@ -8,23 +8,33 @@ class Node:
         """
         self.data = data
         self.parent = None
+        self.son = list()
+        self.deuda = False
     
     def AddChild(self, child):
         """
         docstring
         """
         child.AddParent(self)
-        if hasattr(self, 'son'):
-            self.son.append(child) 
-        else:
-            self.son = list()
-            self.son.append(child)
+        self.son.append(child) 
     
     def AddParent(self, parent):
         """
         docstring
         """
         self.parent = parent
+    
+    def EditRemaining(self, n):
+        """
+        docstring
+        """
+        self.remaining = n
+    
+    def EditDeuda(self, deuda):
+        """
+        docstring
+        """
+        self.deuda = deuda
     
     def PrintChildren(self):
         """
